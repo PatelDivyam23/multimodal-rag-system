@@ -1,12 +1,12 @@
-index_version: v1
+index_version: v2
 
 paths:
   pdfs: data/pdfs
-  page_images: data/page_images
-  index: index/v1
+  page_images: data/page_images_1280
+  index: index/v2
 
 render:
-  dpi: 150
+  dpi: 200
   max_long_edge: 1280
   format: png
 

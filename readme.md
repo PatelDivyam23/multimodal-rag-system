@@ -122,6 +122,23 @@ laptop GPU thermally throttled.
 
 ---
 
+### Render resolution — no effect 
+
+Rebuilt the index at 1280px / 200 DPI (verified: images are 990×1280 on disk).
+Output was byte-identical to the 1024px build — 176,670 vectors, 755 patches/page.
+
+`ColQwen2Processor` enforces a `max_pixels` token budget and downscales inputs
+before patching. A 990×1280 page should yield ~1,575 patches at Qwen2-VL's 28×28
+merge size; the observed 755 sits just under the processor's ~768-token cap.
+
+**Render resolution is not the lever.** Controlling visual granularity requires
+setting `max_pixels` on the processor, which doubles both index size and query cost.
+Not pursued — this corpus is lecture slides with large fonts and diagrams, where
+sub-1024px detail is unlikely to carry retrievable information.
+
+remove them-
+Remove-Item -Recurse -Force index\v2, data\page_images_1280
+
 ## Design notes
 
 ### No vector database
