@@ -1,0 +1,61 @@
+index_version: v1
+
+paths:
+  pdfs: data/pdfs
+  page_images: data/page_images
+  index: index/v1
+
+render:
+  dpi: 150
+  max_long_edge: 1024
+  format: png
+
+visual:
+  model_id: vidore/colqwen2-v1.0
+  device: cuda
+  batch_size: 1                # non-negotiable at 4GB
+  quantization:
+    enabled: true
+    load_in_4bit: true
+    quant_type: nf4
+    compute_dtype: float16
+    double_quant: true
+  embed_dtype: float16
+  empty_cache_every: 10
+  checkpoint_every: 25         # resumable 
+
+text:
+  embed_model: BAAI/bge-small-en-v1.5
+  device: cuda
+  batch_size: 16
+  chunk_size: 1000
+  chunk_overlap: 200
+
+retrieval:
+  visual_top_k: 30
+  dense_top_k: 30
+  bm25_top_k: 30
+  rrf_k: 60
+  rerank:
+    enabled: false
+    model_id: BAAI/bge-reranker-base
+    top_n: 15
+  mmr:
+    enabled: true
+    lambda_mult: 0.6           #  higher = LESS diversity
+    final_k: 5
+    max_per_paper: 2           # paper-level diversity 
+
+generation:
+  route_on_figures: true
+  vlm:
+    provider: gemini
+    model: gemini-2.0-flash
+  text_llm:
+    provider: groq
+    model: llama-3.3-70b-versatile
+  max_context_pages: 5
+
+eval:
+  queries_file: src/eval/queries.yaml
+  k_values: [1, 5, 10]

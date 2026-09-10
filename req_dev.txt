@@ -1,0 +1,37 @@
+# ─── NOTE ───────────────────────────────────────────────
+# Install torch FIRST, separately:
+#   pip install torch torchvision torchaudio \
+#     --index-url https://download.pytorch.org/whl/cu128
+# Never list torch here — PyPI serves the CPU build.
+# ────────────────────────────────────────────────────────
+
+# --- core numerics & storage ---
+numpy>=1.26
+safetensors>=0.4
+pandas>=2.2
+pyarrow>=16.0
+pyyaml>=6.0
+
+# --- multimodal retrieval (GPU) ---
+colpali-engine>=0.3
+transformers>=4.45
+accelerate>=0.34
+bitsandbytes>=0.43          # REQUIRED: 4-bit ColQwen2 on 4GB VRAM
+huggingface-hub>=0.25
+
+# --- text retrieval ---
+sentence-transformers>=3.0
+rank-bm25>=0.2.2
+
+# --- pdf & images ---
+pymupdf>=1.24
+pillow>=10.3
+
+# --- generation APIs ---
+google-genai>=1.0
+groq>=0.11
+
+# --- app & utils ---
+gradio>=4.44
+python-dotenv>=1.0
+tqdm>=4.66
