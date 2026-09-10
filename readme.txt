@@ -1,0 +1,274 @@
+# Multimodal RAG over Visual Documents
+
+> Retrieval-augmented generation that searches document pages **as images**, not just
+> extracted text — so figures, diagrams and tables become first-class retrievable content.
+>
+> Runs entirely on a **4 GB consumer laptop GPU**. No vector database, no cloud inference
+> for retrieval.
+
+---
+
+## Why
+
+Text-only RAG silently discards the visual layer of a document. In this corpus:
+
+- **56%** of pages contain figures or diagrams
+- Pages average only **~543 characters** of extractable text
+- **9 pages** have effectively no text at all — invisible to any text-based retriever
+
+A query like *"diagram showing CPU switching between processes"* has no good answer in
+the text stream. The information lives in the pixels.
+
+This project indexes both, then fuses them.
+
+---
+
+## Architecture
+
+![Architecture](rag.png)
+
+**Two phases.** Indexing runs once on a GPU; retrieval runs on CPU in milliseconds.
+
+```
+INGESTION (offline, GPU)
+  PDFs ──► page images (PyMuPDF, 150 DPI)
+        │
+        ├─► ColQwen2 (4-bit) ──► 176,670 patch vectors ──► visual index (45 MB)
+        │
+        └─► extracted text ──► chunks ──┬─► BGE-small dense vectors
+                                        └─► BM25 lexical index
+
+RETRIEVAL (online, CPU)
+  query ──┬─► visual  : MaxSim over patch vectors
+          ├─► dense   : cosine over chunk embeddings
+          └─► bm25    : lexical scoring
+                    │
+                    ▼
+              RRF fusion ──► per-document capping ──► ranked pages
+```
+
+---
+
+## Results
+
+### Index
+
+| Metric | Value |
+|---|---|
+| Documents | 11 |
+| Pages indexed | 234 |
+| Patch vectors | 176,670 |
+| Visual index size | **45.2 MB** |
+| Text chunks | 247 |
+| Indexing time | **4m 48s** (RTX 3050 Laptop, 4 GB) |
+| Peak VRAM | **1.60 GB** |
+
+### Query latency
+
+| Stage | Time |
+|---|---|
+| ColQwen2 query encoding | ~950 ms |
+| MaxSim over all pages | **~15 ms** |
+| BM25 | 8 ms |
+| Dense | ~5 ms |
+| **Fused (end to end)** | **~1 s** |
+
+### Fusion behaviour
+
+Query: `"process state transition diagram"`
+
+| Rank | Document | Page | Fig | RRF | Retriever hits |
+|---|---|---|---|---|---|
+| 1 | processmanagement | 2 |  | 0.0492 | `visual@1, dense@1, bm25@1` |
+| 2 | processmanagement | 4 |  | 0.0471 | `visual@4, dense@5, bm25@2` |
+| 3 | structures_syscalls | 21 |  | 0.0285 | `dense@19, bm25@3` |
+
+**Rank 1** — all three retrievers independently agreed. Cross-modal consensus is the
+strongest relevance signal available, and RRF amplified it to ~3× any single method.
+
+**Rank 2** — no retriever placed it top-3 alone; agreement surfaced it. Fusion found
+something none of the individual methods would have returned.
+
+Each retriever also fails differently: BM25 ranked `structures_syscalls` p21 highly
+because it contains the *words* "process state transition" — but no diagram. The visual
+path correctly ignored it.
+
+---
+
+## Experiments
+
+### Batch size — negligible gain 
+
+Increasing `visual.batch_size` from 1 → 2, with correct attention-mask padding removal
+(verified by byte-identical output: 176,670 vectors, 755 patches/page):
+
+| Batch size | Time | Peak VRAM |
+|---|---|---|
+| 1 | 4m 48s | 1.60 GB |
+| 2 | 4m 34s | ~1.9 GB |
+
+**~5% improvement — not worth it.** Two reasons:
+
+1. **4-bit quantization is dequantization-bound.** Every `bitsandbytes` matmul unpacks
+   weights on the fly; that cost scales linearly with batch size, so there is nothing to
+   amortize. Batching helps when weight-loading bandwidth dominates — it does not here.
+2. **A single page is already a large batch.** At 755 patches, one image produces a
+   `[1, 755, hidden]` tensor that saturates the GPU on its own.
+
+Per-page time actually *drifted upward* during the batched run (1.03 → 1.27 s/pg) as the
+laptop GPU thermally throttled.
+
+**Reverted to `batch_size: 1`** for lower peak VRAM at effectively equal speed.
+
+---
+
+## Design notes
+
+### No vector database
+
+At 176,670 vectors, exhaustive MaxSim runs in **~15 ms on CPU with perfect recall**.
+Introducing ANN indexing would add approximation error and network latency to solve a
+scaling problem that does not exist at this size.
+
+Storage is a ragged multi-vector layout — a flat `[N, 128]` array plus an offsets index —
+since ColQwen2 emits a variable number of patches per page. Search vectorises this into a
+single padded `einsum`, which cut query time from **35 s to ~1 s** versus a per-page
+Python loop.
+
+The store sits behind an interface, so swapping to Qdrant (the main engine with native
+multi-vector MaxSim) is a config change if the corpus grows past ~1 M vectors.
+
+### 4-bit quantization
+
+ColQwen2-2B needs ~4.4 GB in fp16 — more than this GPU has. NF4 double quantization
+brings it to **1.60 GB**, making late-interaction retrieval viable on consumer hardware
+with no observed retrieval degradation on this corpus.
+
+### RRF over score averaging
+
+The three retrievers produce incomparable score scales: MaxSim ~10–15, BM25 ~0–30,
+cosine 0–1. Averaging lets whichever scale is largest silently dominate.
+Reciprocal Rank Fusion uses only rank position, so no calibration is needed.
+
+### Resumable indexing
+
+Embeddings are checkpointed to shards every 25 pages. A crash costs at most 25 pages of
+work, and re-running automatically skips whatever is already embedded.
+
+---
+
+## Setup
+
+```bash
+git clone https://github.com/PatelDivyam23/multimodal-rag-system.git
+cd multimodal-rag-system
+
+conda create -n rag python=3.12 -y
+conda activate rag
+
+# CUDA torch FIRST — PyPI serves the CPU build
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu128
+
+pip install -r requirements-dev.txt
+pip install -e .
+
+cp .env.example .env      # add GEMINI_API_KEY, GROQ_API_KEY, HF_TOKEN
+```
+
+Verify the GPU:
+
+```bash
+python -c "import torch; print(torch.__version__, torch.cuda.is_available())"
+# 2.7.1+cu128 True
+```
+
+---
+
+## Usage
+
+Drop PDFs into `data/pdfs/`, then run the pipeline in order:
+
+```bash
+# 1. render pages, extract text, detect figures
+python -m src.ingest.pdf_to_images
+
+# 2. ColQwen2 visual embeddings  (~5 min for 234 pages)
+python -m src.ingest.embed_visual
+
+# 3. text chunks -> BGE dense + BM25
+python -m src.ingest.embed_text
+```
+
+Search:
+
+```bash
+# visual only
+python -m src.retrieval.visual_search --query "process state transition diagram" -k 5
+
+# fused across all three retrievers
+python -m src.retrieval.fusion --query "process state transition diagram" -k 5
+
+# side-by-side comparison of all four modes
+python -m src.retrieval.fusion --query "round-robin scheduling quantum" --compare
+```
+
+Every parameter lives in `configs/v1.yaml` — model IDs, render DPI, `top_k`, RRF constant,
+per-document cap. Running an ablation is a config copy, not a code edit:
+
+```bash
+python -m src.ingest.embed_visual --config v2
+```
+#create new config 
+
+python -m src.ingest.pdf_to_images --config v2
+python -m src.ingest.embed_visual --config v2
+python -m src.ingest.embed_text --config v2
+
+python -m src.retrieval.visual_search --config v1 --query "process state transition diagram" -k 5
+python -m src.retrieval.visual_search --config v2 --query "process state transition diagram" -k 5
+---
+
+## Project structure
+
+```
+├── configs/v1.yaml           # every tunable parameter
+├── src/
+│   ├── ingest/
+│   │   ├── pdf_to_images.py  # render + text extraction + figure detection
+│   │   ├── embed_visual.py   # ColQwen2 4-bit, checkpointed
+│   │   └── embed_text.py     # BGE-small + BM25
+│   ├── retrieval/
+│   │   ├── visual_search.py  # ragged store + vectorised MaxSim
+│   │   ├── text_search.py    # dense + lexical, aggregated to pages
+│   │   └── fusion.py         # RRF + per-document capping
+│   └── utils/                # config loader, logging
+└── index/v1/                 # built artifacts (gitignored)
+```
+
+---
+
+## Roadmap
+
+- [x] PDF ingestion with figure detection
+- [x] ColQwen2 late-interaction visual index
+- [x] Dense + lexical text retrieval
+- [x] RRF fusion with rank provenance
+- [ ] Evaluation harness — recall@k / nDCG on figure-grounded vs text-grounded queries
+- [ ] Retrieval ablation: visual vs text vs fused
+- [ ] Cross-encoder reranking
+- [ ] Modality-routed generation (VLM for figure pages, text LLM otherwise)
+- [ ] Conversational layer with history-aware query rewriting
+- [ ] Gradio demo
+
+---
+
+## Stack
+
+ColQwen2 · BGE-small-en-v1.5 · BM25 · PyMuPDF · PyTorch · bitsandbytes · Gemini · Groq
+
+
+
+
+
+
+

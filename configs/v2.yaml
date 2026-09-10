@@ -7,7 +7,7 @@ paths:
 
 render:
   dpi: 150
-  max_long_edge: 1024
+  max_long_edge: 1280
   format: png
 
 visual:

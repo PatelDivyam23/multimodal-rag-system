@@ -46,13 +46,29 @@ def load_model(cfg):
     return model, processor
 
 
+# @torch.no_grad()
+# def embed_page(model, processor, img_path: Path) -> np.ndarray:
+#     """Return [n_patches, dim] float16 embeddings for one page."""
+#     image = Image.open(img_path).convert("RGB")
+#     batch = processor.process_images([image]).to(model.device)
+#     emb = model(**batch)                      # [1, n_patches, dim]
+#     return emb[0].to(torch.float16).cpu().numpy()
+
+
+#this is for more batches
 @torch.no_grad()
-def embed_page(model, processor, img_path: Path) -> np.ndarray:
-    """Return [n_patches, dim] float16 embeddings for one page."""
-    image = Image.open(img_path).convert("RGB")
-    batch = processor.process_images([image]).to(model.device)
-    emb = model(**batch)                      # [1, n_patches, dim]
-    return emb[0].to(torch.float16).cpu().numpy()
+def embed_batch(model, processor, img_paths: list[Path]) -> list[np.ndarray]:
+    """Return a list of [n_patches, dim] arrays — padding removed."""
+    images = [Image.open(p).convert("RGB") for p in img_paths]
+    batch = processor.process_images(images).to(model.device)
+    emb = model(**batch)                              # [B, seq, dim]
+
+    mask = batch["attention_mask"].bool().cpu()       # [B, seq]
+    out = []
+    for i in range(len(images)):
+        valid = emb[i][mask[i]]                       # ← drop padding
+        out.append(valid.to(torch.float16).cpu().numpy())
+    return out
 
 
 def main(config_name: str = "v1", limit: int | None = None) -> None:
@@ -96,26 +112,61 @@ def main(config_name: str = "v1", limit: int | None = None) -> None:
             shard_id += 1
             buf_vecs, buf_keys, buf_lens = [], [], []
 
-        pbar = tqdm(todo.itertuples(), total=len(todo), desc="embedding", unit="pg")
-        for n, row in enumerate(pbar, 1):
-            img = cfg.project_root / row.image_path
+        # pbar = tqdm(todo.itertuples(), total=len(todo), desc="embedding", unit="pg")
+        # for n, row in enumerate(pbar, 1):
+        #     img = cfg.project_root / row.image_path
+        #     try:
+        #         vec = embed_page(model, processor, img)
+        #     except torch.cuda.OutOfMemoryError:
+        #         log.error("OOM on %s -> flushing and aborting", row.image_path)
+        #         flush()
+        #         raise
+
+        #     buf_vecs.append(vec)
+        #     buf_lens.append(vec.shape[0])
+        #     buf_keys.append(row.image_path)
+        #     pbar.set_postfix(patches=vec.shape[0])
+
+        #     if n % cfg.visual.empty_cache_every == 0:
+        #         torch.cuda.empty_cache()
+        #     if n % ckpt == 0:
+        #         flush()
+        #         log.info("checkpoint @ %d pages ", n)
+
+
+
+        #for more batch size
+        bs = cfg.visual.batch_size
+        rows = list(todo.itertuples())
+        pbar = tqdm(total=len(rows), desc="embedding", unit="pg")
+        n = 0
+
+        for start in range(0, len(rows), bs):
+            group = rows[start : start + bs]
+            paths = [cfg.project_root / r.image_path for r in group]
             try:
-                vec = embed_page(model, processor, img)
+                vecs = embed_batch(model, processor, paths)
             except torch.cuda.OutOfMemoryError:
-                log.error("OOM on %s -> flushing and aborting", row.image_path)
+                log.error("OOM at page %d -> flushing and aborting", n)
                 flush()
                 raise
 
-            buf_vecs.append(vec)
-            buf_lens.append(vec.shape[0])
-            buf_keys.append(row.image_path)
-            pbar.set_postfix(patches=vec.shape[0])
+            for r, vec in zip(group, vecs):
+                buf_vecs.append(vec)
+                buf_lens.append(vec.shape[0])
+                buf_keys.append(r.image_path)
+                n += 1
 
-            if n % cfg.visual.empty_cache_every == 0:
+            pbar.update(len(group))
+            pbar.set_postfix(patches=vecs[0].shape[0])
+
+            if n % cfg.visual.empty_cache_every < bs:
                 torch.cuda.empty_cache()
-            if n % ckpt == 0:
+            if n % ckpt < bs:
                 flush()
-                log.info("checkpoint @ %d pages 💾", n)
+                log.info("checkpoint @ %d pages ", n)
+
+        pbar.close()
 
         flush()
         del model
