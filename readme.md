@@ -139,6 +139,46 @@ sub-1024px detail is unlikely to carry retrievable information.
 remove them-
 Remove-Item -Recurse -Force index\v2, data\page_images_1280
 
+### RRF constant — `k=60` fails on a repetitive corpus 
+
+The standard RRF constant from the original paper is `k=60`. On this corpus it
+pushed correct pages out of the top 10.
+
+**The failure case.** Query: *"diagram showing the CPU switching between two
+processes"*. The gold page was ranked **#1 by both the visual and dense
+retrievers**, yet did not appear in the fused top 10.
+
+RRF scores a document as `Σ 1/(k + rank)`. At `k=60`:
+
+```
+gold page      (visual@1, dense@1)   = 1/61 + 1/61  = 0.0328
+any page in all 3 lists @ rank 30    = 3/90         = 0.0333   ← wins
+```
+
+**Two rank-1 endorsements lose to three rank-30 endorsements.** The `+60` term
+compresses ranks 1 and 30 to nearly equal weight, so breadth of agreement
+dominates rank position entirely.
+
+**Sweep** (5 queries, fused mode):
+
+| `rrf_k` | fused recall@5 | fused recall@10 | Query 2 recall@10 |
+|---|---|---|---|
+| 60 | 0.80 | 0.80 | **0.00** |
+| 20 | 0.80 | 0.80 | **0.00** |
+| **10** | **1.00** | **1.00** | **1.00**  |
+
+Even `k=20` was insufficient — the gold page only re-entered the top 10 at `k=10`,
+where `2/11 = 0.182` comfortably beats `3/20 = 0.150`.
+
+**Hypothesised cause.** This corpus is lecture slides with heavy topical repetition
+across decks, so many pages appear in all three retriever lists with weak relevance.
+A high `k` rewards that broad-but-shallow agreement over strong single-retriever
+signal. A corpus with more distinctive pages would likely tolerate `k=60` better —
+untested here.
+
+**Set to `rrf_k: 10`.** Caveat: this sweep rests on n=5 queries and one query
+flipping. To be re-validated as the evaluation set grows.
+
 ## Design notes
 
 ### No vector database

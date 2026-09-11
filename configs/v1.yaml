@@ -35,7 +35,7 @@ retrieval:
   visual_top_k: 30
   dense_top_k: 30
   bm25_top_k: 30
-  rrf_k: 60
+  rrf_k: 10
   rerank:
     enabled: false
     model_id: BAAI/bge-reranker-base

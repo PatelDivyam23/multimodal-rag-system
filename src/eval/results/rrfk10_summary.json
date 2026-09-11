@@ -1,0 +1,42 @@
+{
+  "config": "v1",
+  "n_queries": 5,
+  "overall": {
+    "r@1": {
+      "visual": 0.4,
+      "dense": 0.5,
+      "bm25": 0.2,
+      "fused": 0.3
+    },
+    "r@5": {
+      "visual": 0.5,
+      "dense": 0.7,
+      "bm25": 0.4,
+      "fused": 1.0
+    },
+    "r@10": {
+      "visual": 0.5,
+      "dense": 0.7,
+      "bm25": 0.4,
+      "fused": 1.0
+    },
+    "mrr": {
+      "visual": 0.6,
+      "dense": 0.9,
+      "bm25": 0.4,
+      "fused": 0.8
+    },
+    "ndcg@10": {
+      "visual": 0.523,
+      "dense": 0.723,
+      "bm25": 0.4,
+      "fused": 0.849
+    },
+    "ms": {
+      "visual": 268.6,
+      "dense": 32.8,
+      "bm25": 5.0,
+      "fused": 122.2
+    }
+  }
+}

@@ -1,0 +1,34 @@
+# Each query needs:
+#   q        : natural language question
+#   pages    : correct pages as "<paper_id>:<page_no>"  (0-indexed, as in parquet)
+#   type     : figure | text | keyword
+#
+# type meanings:
+#   figure   -> answerable ONLY from a diagram/chart  (visual should win)
+#   text     -> answerable from prose, paraphrased    (dense should win)
+#   keyword  -> exact jargon / term lookup            (bm25 should win)
+
+- q: "process state transition diagram"
+  pages: ["04_c15_c19_os_processmanagement:1", 04_c15_c19_os_processmanagement:3]
+  type: figure
+
+- q: "diagram showing the CPU switching between two processes"
+  pages: ["04_c15_c19_os_processmanagement:2"]
+  type: figure
+
+- q: "how does the operating system decide which process runs next"
+  pages: [01_c1_c8_os_introduction:20, 01_c1_c8_os_introduction:21]
+  type: text
+
+- q: "round robin scheduling"
+  pages: ["09_c33_os_cpuscheduling:4","09_c33_os_cpuscheduling:3"]
+  type: keyword
+
+- q: "deadlock prevention conditions"
+  pages: ["08_c28_c33_os_processsynchronization:11", "08_c28_c33_os_processsynchronization:15"]
+  type: figure
+
+# ... aim for ~40 total: ~15 figure, ~15 text, ~10 keyword
+
+#python -m src.eval.build_queries --query "deadlock prevention conditions" -->run this if you know a topic but dont know exacetly
+#python -m src.eval.run_eval

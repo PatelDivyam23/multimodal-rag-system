@@ -1,0 +1,21 @@
+query,type,mode,r@1,r@5,r@10,mrr,ndcg@10,ms
+process state transition diagram,figure,visual,0.5,0.5,0.5,1.0,0.6131471927654584,954
+process state transition diagram,figure,dense,0.5,0.5,0.5,1.0,0.6131471927654584,94
+process state transition diagram,figure,bm25,0.5,1.0,1.0,1.0,1.0,7
+process state transition diagram,figure,fused,0.5,1.0,1.0,1.0,1.0,126
+diagram showing the CPU switching between two processes,figure,visual,1.0,1.0,1.0,1.0,1.0,124
+diagram showing the CPU switching between two processes,figure,dense,1.0,1.0,1.0,1.0,1.0,15
+diagram showing the CPU switching between two processes,figure,bm25,0.0,0.0,0.0,0.0,0.0,6
+diagram showing the CPU switching between two processes,figure,fused,0.0,0.0,0.0,0.0,0.0,146
+how does the operating system decide which process runs next,text,visual,0.0,0.0,0.0,0.0,0.0,105
+how does the operating system decide which process runs next,text,dense,0.0,0.5,0.5,0.5,0.38685280723454163,15
+how does the operating system decide which process runs next,text,bm25,0.0,0.0,0.0,0.0,0.0,7
+how does the operating system decide which process runs next,text,fused,0.5,1.0,1.0,1.0,1.0,145
+round robin scheduling,keyword,visual,0.5,1.0,1.0,1.0,1.0,125
+round robin scheduling,keyword,dense,0.5,1.0,1.0,1.0,1.0,15
+round robin scheduling,keyword,bm25,0.5,1.0,1.0,1.0,1.0,3
+round robin scheduling,keyword,fused,0.5,1.0,1.0,1.0,1.0,116
+deadlock prevention conditions,figure,visual,0.0,0.0,0.0,0.0,0.0,102
+deadlock prevention conditions,figure,dense,0.5,0.5,0.5,1.0,0.6131471927654584,16
+deadlock prevention conditions,figure,bm25,0.0,0.0,0.0,0.0,0.0,1
+deadlock prevention conditions,figure,fused,0.0,1.0,1.0,0.5,0.6934264036172708,117

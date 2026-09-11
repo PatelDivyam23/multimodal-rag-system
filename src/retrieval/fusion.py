@@ -32,17 +32,30 @@ def rrf(ranked_lists: dict[str, list[str]], k: int = 60) -> dict[str, dict]:
         for page, score in sorted(fused.items(), key=lambda x: -x[1])
     }
 
+# page ranking is deleted instead of demoted
+# def cap_per_paper(pages: list[str], meta: pd.DataFrame, max_per: int) -> list[str]:
+#     """Source diversification: at most `max_per` pages from any one document."""
+#     counts: dict[str, int] = defaultdict(int)
+#     kept = []
+#     for p in pages:
+#         paper = meta.loc[p].paper_id
+#         if counts[paper] < max_per:
+#             kept.append(p)
+#             counts[paper] += 1
+#     return kept
 
 def cap_per_paper(pages: list[str], meta: pd.DataFrame, max_per: int) -> list[str]:
-    """Source diversification: at most `max_per` pages from any one document."""
+    """Demote pages beyond `max_per` per document instead of discarding them."""
     counts: dict[str, int] = defaultdict(int)
-    kept = []
+    kept, overflow = [], []
     for p in pages:
         paper = meta.loc[p].paper_id
         if counts[paper] < max_per:
             kept.append(p)
             counts[paper] += 1
-    return kept
+        else:
+            overflow.append(p)
+    return kept + overflow          # nothing is lost
 
 
 class HybridRetriever:
