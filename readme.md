@@ -304,18 +304,20 @@ python -m src.retrieval.visual_search --config v2 --query "process state transit
 
 ---
 
+
 ## Roadmap
 
 - [x] PDF ingestion with figure detection
 - [x] ColQwen2 late-interaction visual index
 - [x] Dense + lexical text retrieval
 - [x] RRF fusion with rank provenance
-- [x] Evaluation harness — recall@k / nDCG on figure-grounded vs text-grounded queries
-- [x] Retrieval ablation: visual vs text vs fused
-- [ ] Cross-encoder reranking
+- [x] Evaluation harness — 30 labelled queries, recall@k / MRR / nDCG
+- [x] Retrieval ablation: visual vs dense vs bm25 vs fused
 - [x] Modality-routed generation (VLM for figure pages, text LLM otherwise)
+- [ ] Gradio demo with page thumbnails and retriever provenance
+- [ ] Weighted RRF — test whether fusion can beat visual-only
 - [ ] Conversational layer with history-aware query rewriting
-- [ ] Gradio demo
+- [ ] Deploy to HF Spaces (index hosted as HF Dataset)
 
 ---
 
