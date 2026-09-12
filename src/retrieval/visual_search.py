@@ -122,7 +122,7 @@ def main(config_name: str = "v1", query: str | None = None, k: int = 5):
         t0 = time.perf_counter()
         df = index.search(qtext, k=k)
         dt = (time.perf_counter() - t0) * 1000
-        print(f"\n🔍 {qtext!r}   ({dt:.0f} ms)")
+        print(f"\n {qtext!r}   ({dt:.0f} ms)")
         print(df.to_string(index=False))
 
 

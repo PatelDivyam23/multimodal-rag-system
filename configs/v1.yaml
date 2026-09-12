@@ -50,10 +50,10 @@ generation:
   route_on_figures: true
   vlm:
     provider: gemini
-    model: gemini-2.0-flash
+    model: gemini-3.6-flash 
   text_llm:
     provider: groq
-    model: llama-3.3-70b-versatile
+    model: qwen/qwen3.8-27b
   max_context_pages: 5
 
 eval:

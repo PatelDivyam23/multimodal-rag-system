@@ -106,6 +106,7 @@ class HybridRetriever:
                 "paper_id": m.paper_id,
                 "page": int(m.page_no) + 1,
                 "fig": bool(m.has_figure),
+                "image_path": page,              # ← add this
                 "hits": ",".join(f"{s}@{rk}" for s, rk in fused[page]["ranks"].items()),
             })
         return pd.DataFrame(rows)
