@@ -310,10 +310,10 @@ python -m src.retrieval.visual_search --config v2 --query "process state transit
 - [x] ColQwen2 late-interaction visual index
 - [x] Dense + lexical text retrieval
 - [x] RRF fusion with rank provenance
-- [ ] Evaluation harness — recall@k / nDCG on figure-grounded vs text-grounded queries
-- [ ] Retrieval ablation: visual vs text vs fused
+- [x] Evaluation harness — recall@k / nDCG on figure-grounded vs text-grounded queries
+- [x] Retrieval ablation: visual vs text vs fused
 - [ ] Cross-encoder reranking
-- [ ] Modality-routed generation (VLM for figure pages, text LLM otherwise)
+- [x] Modality-routed generation (VLM for figure pages, text LLM otherwise)
 - [ ] Conversational layer with history-aware query rewriting
 - [ ] Gradio demo
 
