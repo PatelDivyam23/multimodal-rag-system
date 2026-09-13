@@ -23,6 +23,32 @@ This project indexes both, then fuses them.
 
 ---
 
+## Demo
+
+![Demo](multimodel-rag.gif)
+
+Run locally:
+
+```bash
+python app/app.py
+```
+
+### Deployment status
+
+Space configuration is complete and the index is published as a
+[HF Dataset](https://huggingface.co/datasets/PatelDivyam23/multimodal-rag-index)
+(45 MB of patch vectors plus 234 page images).
+
+Not yet live: free-tier Gradio and ZeroGPU Spaces require an account older than
+30 days. Deployment is a `git push` once eligibility opens.
+
+**Architecture is deployment-ready.** Index artifacts live in a versioned HF
+Dataset rather than in Git, so the application pulls them at runtime
+(`src/utils/assets.py`). This keeps the code repository under 1 MB and lets the
+index be rebuilt independently of code history. A separate `configs/space.yaml`
+disables 4-bit quantization for hosted GPUs, where fp16 is faster and removes the
+`bitsandbytes` dependency.
+
 ## Architecture
 
 ![Architecture](rag.png)
@@ -314,7 +340,7 @@ python -m src.retrieval.visual_search --config v2 --query "process state transit
 - [x] Evaluation harness — 30 labelled queries, recall@k / MRR / nDCG
 - [x] Retrieval ablation: visual vs dense vs bm25 vs fused
 - [x] Modality-routed generation (VLM for figure pages, text LLM otherwise)
-- [ ] Gradio demo with page thumbnails and retriever provenance
+- [x] Gradio demo with page thumbnails and retriever provenance
 - [ ] Weighted RRF — test whether fusion can beat visual-only
 - [ ] Conversational layer with history-aware query rewriting
 - [ ] Deploy to HF Spaces (index hosted as HF Dataset)

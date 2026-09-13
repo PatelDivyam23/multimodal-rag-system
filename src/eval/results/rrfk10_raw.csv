@@ -1,21 +1,197 @@
 query,type,mode,r@1,r@5,r@10,mrr,ndcg@10,ms
-process state transition diagram,figure,visual,0.5,0.5,0.5,1.0,0.6131471927654584,897
-process state transition diagram,figure,dense,0.5,0.5,0.5,1.0,0.6131471927654584,93
-process state transition diagram,figure,bm25,0.5,1.0,1.0,1.0,1.0,7
-process state transition diagram,figure,fused,0.5,1.0,1.0,1.0,1.0,145
-diagram showing the CPU switching between two processes,figure,visual,1.0,1.0,1.0,1.0,1.0,144
-diagram showing the CPU switching between two processes,figure,dense,1.0,1.0,1.0,1.0,1.0,17
+process state transition diagram,figure,visual,0.5,0.5,0.5,1.0,0.6131471927654584,1016
+process state transition diagram,figure,dense,0.5,0.5,0.5,1.0,0.6131471927654584,113
+process state transition diagram,figure,bm25,0.5,1.0,1.0,1.0,1.0,8
+process state transition diagram,figure,fused,0.5,1.0,1.0,1.0,1.0,133
+diagram showing the CPU switching between two processes,figure,visual,1.0,1.0,1.0,1.0,1.0,136
+diagram showing the CPU switching between two processes,figure,dense,1.0,1.0,1.0,1.0,1.0,21
 diagram showing the CPU switching between two processes,figure,bm25,0.0,0.0,0.0,0.0,0.0,7
-diagram showing the CPU switching between two processes,figure,fused,0.0,1.0,1.0,0.5,0.6309297535714575,122
-how does the operating system decide which process runs next,text,visual,0.0,0.0,0.0,0.0,0.0,100
-how does the operating system decide which process runs next,text,dense,0.0,0.5,0.5,0.5,0.38685280723454163,17
-how does the operating system decide which process runs next,text,bm25,0.0,0.0,0.0,0.0,0.0,7
-how does the operating system decide which process runs next,text,fused,0.5,1.0,1.0,1.0,0.9197207891481876,117
-round robin scheduling,keyword,visual,0.5,1.0,1.0,1.0,1.0,99
+diagram showing the CPU switching between two processes,figure,fused,0.0,1.0,1.0,0.5,0.6309297535714575,119
+how does the operating system decide which process runs next,text,visual,0.0,0.0,0.0,0.0,0.0,94
+how does the operating system decide which process runs next,text,dense,0.0,0.5,0.5,0.5,0.38685280723454163,20
+how does the operating system decide which process runs next,text,bm25,0.0,0.0,0.0,0.0,0.0,8
+how does the operating system decide which process runs next,text,fused,0.5,1.0,1.0,1.0,0.9197207891481876,137
+round robin scheduling,keyword,visual,0.5,1.0,1.0,1.0,1.0,103
 round robin scheduling,keyword,dense,0.5,1.0,1.0,1.0,1.0,16
 round robin scheduling,keyword,bm25,0.5,1.0,1.0,1.0,1.0,3
-round robin scheduling,keyword,fused,0.5,1.0,1.0,1.0,1.0,110
-deadlock prevention conditions,figure,visual,0.0,0.0,0.0,0.0,0.0,103
-deadlock prevention conditions,figure,dense,0.5,0.5,0.5,1.0,0.6131471927654584,21
+round robin scheduling,keyword,fused,0.5,1.0,1.0,1.0,1.0,123
+deadlock prevention conditions,figure,visual,0.0,0.0,0.0,0.0,0.0,116
+deadlock prevention conditions,figure,dense,0.5,0.5,0.5,1.0,0.6131471927654584,20
 deadlock prevention conditions,figure,bm25,0.0,0.0,0.0,0.0,0.0,1
-deadlock prevention conditions,figure,fused,0.0,1.0,1.0,0.5,0.6934264036172708,117
+deadlock prevention conditions,figure,fused,0.0,1.0,1.0,0.5,0.6934264036172708,109
+process state transition diagram,figure,visual,1.0,1.0,1.0,1.0,1.0,125
+process state transition diagram,figure,dense,1.0,1.0,1.0,1.0,1.0,17
+process state transition diagram,figure,bm25,1.0,1.0,1.0,1.0,1.0,6
+process state transition diagram,figure,fused,1.0,1.0,1.0,1.0,1.0,123
+diagram showing CPU switching from one process to another,figure,visual,1.0,1.0,1.0,1.0,1.0,127
+diagram showing CPU switching from one process to another,figure,dense,1.0,1.0,1.0,1.0,1.0,15
+diagram showing CPU switching from one process to another,figure,bm25,0.0,0.0,0.0,0.0,0.0,8
+diagram showing CPU switching from one process to another,figure,fused,1.0,1.0,1.0,1.0,1.0,116
+process control block and the information stored for a process,figure,visual,1.0,1.0,1.0,1.0,1.0,105
+process control block and the information stored for a process,figure,dense,0.0,0.0,0.0,0.0,0.0,16
+process control block and the information stored for a process,figure,bm25,0.0,0.0,0.0,0.0,0.0,7
+process control block and the information stored for a process,figure,fused,0.0,1.0,1.0,0.25,0.43067655807339306,116
+typical process tree showing parent and child processes,figure,visual,1.0,1.0,1.0,1.0,1.0,95
+typical process tree showing parent and child processes,figure,dense,1.0,1.0,1.0,1.0,1.0,15
+typical process tree showing parent and child processes,figure,bm25,0.0,1.0,1.0,0.5,0.6309297535714575,7
+typical process tree showing parent and child processes,figure,fused,1.0,1.0,1.0,1.0,1.0,130
+producer consumer problem using shared memory,figure,visual,0.5,0.5,0.5,1.0,0.6131471927654584,112
+producer consumer problem using shared memory,figure,dense,0.0,0.5,0.5,0.25,0.2640681225725909,16
+producer consumer problem using shared memory,figure,bm25,0.0,0.5,0.5,0.5,0.38685280723454163,7
+producer consumer problem using shared memory,figure,fused,0.0,0.5,0.5,0.5,0.38685280723454163,121
+producer code for inserting items into a shared buffer,keyword,visual,0.0,1.0,1.0,0.25,0.43067655807339306,103
+producer code for inserting items into a shared buffer,keyword,dense,0.0,0.0,0.0,0.0,0.0,20
+producer code for inserting items into a shared buffer,keyword,bm25,0.0,0.0,0.0,0.0,0.0,7
+producer code for inserting items into a shared buffer,keyword,fused,0.0,0.0,0.0,0.0,0.0,123
+consumer code for removing items from a shared buffer,keyword,visual,0.0,1.0,1.0,0.25,0.43067655807339306,97
+consumer code for removing items from a shared buffer,keyword,dense,0.0,0.0,0.0,0.0,0.0,16
+consumer code for removing items from a shared buffer,keyword,bm25,0.0,0.0,0.0,0.0,0.0,7
+consumer code for removing items from a shared buffer,keyword,fused,0.0,0.0,0.0,0.0,0.0,115
+difference between shared memory and message passing,text,visual,0.0,0.5,0.5,0.5,0.38685280723454163,105
+difference between shared memory and message passing,text,dense,0.5,0.5,0.5,1.0,0.6131471927654584,15
+difference between shared memory and message passing,text,bm25,0.5,1.0,1.0,1.0,0.9197207891481876,7
+difference between shared memory and message passing,text,fused,0.5,1.0,1.0,1.0,0.9197207891481876,113
+single threaded versus multithreaded process,figure,visual,1.0,1.0,1.0,1.0,1.0,106
+single threaded versus multithreaded process,figure,dense,0.0,0.0,0.0,0.0,0.0,19
+single threaded versus multithreaded process,figure,bm25,0.0,0.0,0.0,0.0,0.0,6
+single threaded versus multithreaded process,figure,fused,0.0,0.0,0.0,0.0,0.0,143
+multithreaded server architecture where a server creates a new thread for each request,figure,visual,1.0,1.0,1.0,1.0,1.0,136
+multithreaded server architecture where a server creates a new thread for each request,figure,dense,1.0,1.0,1.0,1.0,1.0,19
+multithreaded server architecture where a server creates a new thread for each request,figure,bm25,1.0,1.0,1.0,1.0,1.0,8
+multithreaded server architecture where a server creates a new thread for each request,figure,fused,1.0,1.0,1.0,1.0,1.0,125
+difference between concurrency on a single core and parallel execution on multiple cores,figure,visual,1.0,1.0,1.0,1.0,1.0,98
+difference between concurrency on a single core and parallel execution on multiple cores,figure,dense,1.0,1.0,1.0,1.0,1.0,16
+difference between concurrency on a single core and parallel execution on multiple cores,figure,bm25,0.0,1.0,1.0,0.5,0.6309297535714575,7
+difference between concurrency on a single core and parallel execution on multiple cores,figure,fused,1.0,1.0,1.0,1.0,1.0,115
+many to one thread model,figure,visual,0.0,1.0,1.0,0.5,0.6309297535714575,103
+many to one thread model,figure,dense,0.0,0.0,0.0,0.0,0.0,20
+many to one thread model,figure,bm25,0.0,0.0,0.0,0.0,0.0,7
+many to one thread model,figure,fused,0.0,0.0,0.0,0.0,0.0,117
+one to one thread model,figure,visual,1.0,1.0,1.0,1.0,1.0,101
+one to one thread model,figure,dense,0.0,0.0,0.0,0.0,0.0,15
+one to one thread model,figure,bm25,0.0,1.0,1.0,0.2,0.38685280723454163,7
+one to one thread model,figure,fused,1.0,1.0,1.0,1.0,1.0,111
+producer consumer counter race condition,figure,visual,0.0,1.0,1.0,0.3333333333333333,0.5,99
+producer consumer counter race condition,figure,dense,0.0,1.0,1.0,0.5,0.6309297535714575,15
+producer consumer counter race condition,figure,bm25,0.0,0.0,0.0,0.0,0.0,3
+producer consumer counter race condition,figure,fused,0.0,1.0,1.0,0.3333333333333333,0.5,103
+example showing incorrect counter value caused by concurrent producer and consumer execution,figure,visual,1.0,1.0,1.0,1.0,1.0,99
+example showing incorrect counter value caused by concurrent producer and consumer execution,figure,dense,0.0,1.0,1.0,0.5,0.6309297535714575,16
+example showing incorrect counter value caused by concurrent producer and consumer execution,figure,bm25,0.0,0.0,0.0,0.0,0.0,8
+example showing incorrect counter value caused by concurrent producer and consumer execution,figure,fused,0.0,0.0,0.0,0.0,0.0,110
+critical section problem,text,visual,0.5,1.0,1.0,1.0,1.0,104
+critical section problem,text,dense,0.5,0.5,0.5,1.0,0.6131471927654584,17
+critical section problem,text,bm25,0.5,0.5,0.5,1.0,0.6131471927654584,3
+critical section problem,text,fused,0.5,0.5,0.5,1.0,0.6131471927654584,134
+Peterson's solution for process synchronization,figure,visual,0.0,1.0,1.0,0.3333333333333333,0.5,109
+Peterson's solution for process synchronization,figure,dense,0.0,0.0,0.0,0.0,0.0,15
+Peterson's solution for process synchronization,figure,bm25,1.0,1.0,1.0,1.0,1.0,7
+Peterson's solution for process synchronization,figure,fused,0.0,1.0,1.0,0.3333333333333333,0.5,138
+hardware instructions used for process synchronization,keyword,visual,0.0,1.0,1.0,0.3333333333333333,0.5,98
+hardware instructions used for process synchronization,keyword,dense,1.0,1.0,1.0,1.0,1.0,15
+hardware instructions used for process synchronization,keyword,bm25,1.0,1.0,1.0,1.0,1.0,7
+hardware instructions used for process synchronization,keyword,fused,1.0,1.0,1.0,1.0,1.0,111
+CPU I/O burst cycle,figure,visual,0.0,1.0,1.0,0.5,0.6309297535714575,104
+CPU I/O burst cycle,figure,dense,0.0,1.0,1.0,0.5,0.6309297535714575,17
+CPU I/O burst cycle,figure,bm25,0.0,1.0,1.0,0.5,0.6309297535714575,7
+CPU I/O burst cycle,figure,fused,0.0,1.0,1.0,0.5,0.6309297535714575,113
+round robin scheduling,figure,visual,0.0,1.0,1.0,0.5,0.6309297535714575,108
+round robin scheduling,figure,dense,0.0,1.0,1.0,0.5,0.6309297535714575,15
+round robin scheduling,figure,bm25,1.0,1.0,1.0,1.0,1.0,3
+round robin scheduling,figure,fused,0.0,1.0,1.0,0.5,0.6309297535714575,130
+context switching overhead in round robin scheduling,figure,visual,1.0,1.0,1.0,1.0,1.0,102
+context switching overhead in round robin scheduling,figure,dense,1.0,1.0,1.0,1.0,1.0,16
+context switching overhead in round robin scheduling,figure,bm25,1.0,1.0,1.0,1.0,1.0,7
+context switching overhead in round robin scheduling,figure,fused,1.0,1.0,1.0,1.0,1.0,139
+multilevel queue scheduling,figure,visual,1.0,1.0,1.0,1.0,1.0,96
+multilevel queue scheduling,figure,dense,0.0,1.0,1.0,0.5,0.6309297535714575,15
+multilevel queue scheduling,figure,bm25,1.0,1.0,1.0,1.0,1.0,3
+multilevel queue scheduling,figure,fused,1.0,1.0,1.0,1.0,1.0,108
+multilevel feedback queue scheduling,figure,visual,1.0,1.0,1.0,1.0,1.0,95
+multilevel feedback queue scheduling,figure,dense,1.0,1.0,1.0,1.0,1.0,19
+multilevel feedback queue scheduling,figure,bm25,1.0,1.0,1.0,1.0,1.0,4
+multilevel feedback queue scheduling,figure,fused,1.0,1.0,1.0,1.0,1.0,107
+logical address versus physical address,figure,visual,1.0,1.0,1.0,1.0,1.0,131
+logical address versus physical address,figure,dense,1.0,1.0,1.0,1.0,1.0,16
+logical address versus physical address,figure,bm25,1.0,1.0,1.0,1.0,1.0,4
+logical address versus physical address,figure,fused,1.0,1.0,1.0,1.0,1.0,135
+MMU mapping logical address to physical address,figure,visual,1.0,1.0,1.0,1.0,1.0,101
+MMU mapping logical address to physical address,figure,dense,0.0,1.0,1.0,0.5,0.6309297535714575,15
+MMU mapping logical address to physical address,figure,bm25,1.0,1.0,1.0,1.0,1.0,7
+MMU mapping logical address to physical address,figure,fused,1.0,1.0,1.0,1.0,1.0,146
+standard swapping between main memory and backing store,figure,visual,1.0,1.0,1.0,1.0,1.0,105
+standard swapping between main memory and backing store,figure,dense,1.0,1.0,1.0,1.0,1.0,15
+standard swapping between main memory and backing store,figure,bm25,1.0,1.0,1.0,1.0,1.0,7
+standard swapping between main memory and backing store,figure,fused,1.0,1.0,1.0,1.0,1.0,109
+page table stored in main memory,figure,visual,1.0,1.0,1.0,1.0,1.0,97
+page table stored in main memory,figure,dense,0.0,1.0,1.0,0.5,0.6309297535714575,16
+page table stored in main memory,figure,bm25,0.0,1.0,1.0,0.5,0.6309297535714575,7
+page table stored in main memory,figure,fused,0.0,1.0,1.0,0.5,0.6309297535714575,112
+translation lookaside buffer TLB,keyword,visual,0.5,1.0,1.0,1.0,1.0,113
+translation lookaside buffer TLB,keyword,dense,0.5,1.0,1.0,1.0,1.0,15
+translation lookaside buffer TLB,keyword,bm25,0.5,1.0,1.0,1.0,1.0,3
+translation lookaside buffer TLB,keyword,fused,0.5,1.0,1.0,1.0,1.0,106
+FIFO optimal and LRU page replacement algorithms,keyword,visual,1.0,1.0,1.0,1.0,1.0,101
+FIFO optimal and LRU page replacement algorithms,keyword,dense,1.0,1.0,1.0,1.0,1.0,16
+FIFO optimal and LRU page replacement algorithms,keyword,bm25,1.0,1.0,1.0,1.0,1.0,7
+FIFO optimal and LRU page replacement algorithms,keyword,fused,1.0,1.0,1.0,1.0,1.0,114
+what happens when a process does not have enough frames and keeps generating page faults,text,visual,0.5,0.5,0.5,1.0,0.6131471927654584,129
+what happens when a process does not have enough frames and keeps generating page faults,text,dense,0.5,0.5,0.5,1.0,0.6131471927654584,16
+what happens when a process does not have enough frames and keeps generating page faults,text,bm25,0.5,0.5,0.5,1.0,0.6131471927654584,7
+what happens when a process does not have enough frames and keeps generating page faults,text,fused,0.5,0.5,0.5,1.0,0.6131471927654584,136
+thrashing and its effect on system throughput,text,visual,1.0,1.0,1.0,1.0,1.0,142
+thrashing and its effect on system throughput,text,dense,0.0,1.0,1.0,0.5,0.6309297535714575,15
+thrashing and its effect on system throughput,text,bm25,1.0,1.0,1.0,1.0,1.0,7
+thrashing and its effect on system throughput,text,fused,1.0,1.0,1.0,1.0,1.0,118
+file system provides a logical view of secondary storage,text,visual,0.0,1.0,1.0,0.5,0.6309297535714575,118
+file system provides a logical view of secondary storage,text,dense,1.0,1.0,1.0,1.0,1.0,15
+file system provides a logical view of secondary storage,text,bm25,1.0,1.0,1.0,1.0,1.0,7
+file system provides a logical view of secondary storage,text,fused,1.0,1.0,1.0,1.0,1.0,114
+three levels of the file system,figure,visual,1.0,1.0,1.0,1.0,1.0,123
+three levels of the file system,figure,dense,1.0,1.0,1.0,1.0,1.0,15
+three levels of the file system,figure,bm25,1.0,1.0,1.0,1.0,1.0,7
+three levels of the file system,figure,fused,1.0,1.0,1.0,1.0,1.0,108
+magnetic disk structure showing platter track sector spindle and read write head,figure,visual,0.0,1.0,1.0,0.5,0.6309297535714575,118
+magnetic disk structure showing platter track sector spindle and read write head,figure,dense,0.0,1.0,1.0,0.25,0.43067655807339306,20
+magnetic disk structure showing platter track sector spindle and read write head,figure,bm25,0.0,1.0,1.0,0.3333333333333333,0.5,7
+magnetic disk structure showing platter track sector spindle and read write head,figure,fused,0.0,1.0,1.0,0.5,0.6309297535714575,132
+disk scheduling seek time and rotational latency,text,visual,1.0,1.0,1.0,1.0,1.0,101
+disk scheduling seek time and rotational latency,text,dense,0.0,1.0,1.0,0.5,0.6309297535714575,15
+disk scheduling seek time and rotational latency,text,bm25,1.0,1.0,1.0,1.0,1.0,8
+disk scheduling seek time and rotational latency,text,fused,1.0,1.0,1.0,1.0,1.0,111
+operating system as a resource allocator,text,visual,0.0,1.0,1.0,0.5,0.6309297535714575,106
+operating system as a resource allocator,text,dense,0.0,0.0,1.0,0.14285714285714285,0.3333333333333333,15
+operating system as a resource allocator,text,bm25,1.0,1.0,1.0,1.0,1.0,7
+operating system as a resource allocator,text,fused,1.0,1.0,1.0,1.0,1.0,108
+what are the responsibilities of an operating system in storage management,text,visual,0.0,0.0,1.0,0.1111111111111111,0.3010299956639812,111
+what are the responsibilities of an operating system in storage management,text,dense,1.0,1.0,1.0,1.0,1.0,20
+what are the responsibilities of an operating system in storage management,text,bm25,0.0,0.0,1.0,0.125,0.31546487678572877,7
+what are the responsibilities of an operating system in storage management,text,fused,0.0,0.0,1.0,0.1,0.2890648263178879,109
+types of system calls for process control,keyword,visual,0.0,0.5,1.0,0.5,0.5640920940185894,119
+types of system calls for process control,keyword,dense,0.5,0.5,0.5,1.0,0.6131471927654584,15
+types of system calls for process control,keyword,bm25,0.5,0.5,0.5,1.0,0.6131471927654584,7
+types of system calls for process control,keyword,fused,0.5,0.5,0.5,1.0,0.6131471927654584,112
+system calls for file management such as create open read write and close,keyword,visual,0.0,0.0,0.0,0.0,0.0,99
+system calls for file management such as create open read write and close,keyword,dense,0.0,0.0,0.0,0.0,0.0,16
+system calls for file management such as create open read write and close,keyword,bm25,0.0,0.0,1.0,0.1111111111111111,0.3010299956639812,7
+system calls for file management such as create open read write and close,keyword,fused,0.0,0.0,0.0,0.0,0.0,112
+shared memory and message passing system calls,text,visual,1.0,1.0,1.0,1.0,1.0,105
+shared memory and message passing system calls,text,dense,0.0,1.0,1.0,0.2,0.38685280723454163,19
+shared memory and message passing system calls,text,bm25,1.0,1.0,1.0,1.0,1.0,7
+shared memory and message passing system calls,text,fused,0.0,1.0,1.0,0.5,0.6309297535714575,124
+distributed operating system versus network operating system,text,visual,1.0,1.0,1.0,1.0,1.0,97
+distributed operating system versus network operating system,text,dense,1.0,1.0,1.0,1.0,1.0,20
+distributed operating system versus network operating system,text,bm25,1.0,1.0,1.0,1.0,1.0,7
+distributed operating system versus network operating system,text,fused,1.0,1.0,1.0,1.0,1.0,123
+peer to peer computing where nodes can act as both client and server,text,visual,0.5,0.5,0.5,1.0,0.6131471927654584,99
+peer to peer computing where nodes can act as both client and server,text,dense,0.5,1.0,1.0,1.0,0.9197207891481876,16
+peer to peer computing where nodes can act as both client and server,text,bm25,0.0,0.5,0.5,0.5,0.38685280723454163,8
+peer to peer computing where nodes can act as both client and server,text,fused,0.5,0.5,0.5,1.0,0.6131471927654584,124
+virtual machine monitor managing multiple guest operating systems,figure,visual,0.0,0.0,1.0,0.1,0.2890648263178879,99
+virtual machine monitor managing multiple guest operating systems,figure,dense,0.0,0.0,1.0,0.125,0.31546487678572877,15
+virtual machine monitor managing multiple guest operating systems,figure,bm25,0.0,0.0,0.0,0.0,0.0,7
+virtual machine monitor managing multiple guest operating systems,figure,fused,0.0,1.0,1.0,0.25,0.43067655807339306,122
+public private and hybrid cloud computing,keyword,visual,1.0,1.0,1.0,1.0,1.0,117
+public private and hybrid cloud computing,keyword,dense,1.0,1.0,1.0,1.0,1.0,17
+public private and hybrid cloud computing,keyword,bm25,1.0,1.0,1.0,1.0,1.0,7
+public private and hybrid cloud computing,keyword,fused,1.0,1.0,1.0,1.0,1.0,128

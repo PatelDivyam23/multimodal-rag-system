@@ -13,8 +13,10 @@ from src.generation.prompts import SYSTEM, TEXT_USER, VLM_USER
 from src.retrieval.fusion import HybridRetriever
 from src.utils.config import load_config
 from src.utils.logging import get_logger
+from src.utils.assets import resolve_image
 
-load_dotenv()
+# load_dotenv()
+load_dotenv(override=True)
 log = get_logger()
 
 
@@ -64,7 +66,9 @@ class Generator:
 
         client = self._gemini_client()
         labels = [page_label(r) for r in hits.itertuples()]
-        images = [Image.open(self.cfg.project_root / r.image_path).convert("RGB")
+        # images = [Image.open(self.cfg.project_root / r.image_path).convert("RGB")
+        #           for r in hits.itertuples()]
+        images = [Image.open(resolve_image(self.cfg, r.image_path)).convert("RGB")
                   for r in hits.itertuples()]
 
         prompt = VLM_USER.format(

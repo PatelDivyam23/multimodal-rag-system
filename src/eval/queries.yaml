@@ -28,6 +28,227 @@
   pages: ["08_c28_c33_os_processsynchronization:11", "08_c28_c33_os_processsynchronization:15"]
   type: figure
 
+
+  # =========================
+# PROCESS MANAGEMENT
+# =========================
+
+- q: "process state transition diagram"
+  pages: ["04_c15_c19_os_processmanagement:1"]
+  type: figure
+
+- q: "diagram showing CPU switching from one process to another"
+  pages: ["04_c15_c19_os_processmanagement:2"]
+  type: figure
+
+- q: "process control block and the information stored for a process"
+  pages: ["04_c15_c19_os_processmanagement:1"]
+  type: figure
+
+- q: "typical process tree showing parent and child processes"
+  pages: ["04_c15_c19_os_processmanagement:4"]
+  type: figure
+
+
+# =========================
+# INTERPROCESS COMMUNICATION
+# =========================
+
+- q: "producer consumer problem using shared memory"
+  pages: ["05_c20_os_ipc_1:1", "05_c20_os_ipc_1:2"]
+  type: figure
+
+- q: "producer code for inserting items into a shared buffer"
+  pages: ["05_c20_os_ipc_1:2"]
+  type: keyword
+
+- q: "consumer code for removing items from a shared buffer"
+  pages: ["05_c20_os_ipc_1:2"]
+  type: keyword
+
+- q: "difference between shared memory and message passing"
+  pages: ["05_c20_os_ipc_1:3", "05_c20_os_ipc_1:4"]
+  type: text
+
+
+# =========================
+# MULTITHREADING
+# =========================
+
+- q: "single threaded versus multithreaded process"
+  pages: ["07_c25_os_multithreading:1"]
+  type: figure
+
+- q: "multithreaded server architecture where a server creates a new thread for each request"
+  pages: ["07_c25_os_multithreading:2"]
+  type: figure
+
+- q: "difference between concurrency on a single core and parallel execution on multiple cores"
+  pages: ["07_c25_os_multithreading:3"]
+  type: figure
+
+- q: "many to one thread model"
+  pages: ["07_c25_os_multithreading:4"]
+  type: figure
+
+- q: "one to one thread model"
+  pages: ["07_c25_os_multithreading:5"]
+  type: figure
+
+
+# =========================
+# PROCESS SYNCHRONIZATION
+# =========================
+
+- q: "producer consumer counter race condition"
+  pages: ["08_c28_c33_os_processsynchronization:2"]
+  type: figure
+
+- q: "example showing incorrect counter value caused by concurrent producer and consumer execution"
+  pages: ["08_c28_c33_os_processsynchronization:2"]
+  type: figure
+
+- q: "critical section problem"
+  pages: ["08_c28_c33_os_processsynchronization:2", "08_c28_c33_os_processsynchronization:3"]
+  type: text
+
+- q: "Peterson's solution for process synchronization"
+  pages: ["08_c28_c33_os_processsynchronization:3"]
+  type: figure
+
+- q: "hardware instructions used for process synchronization"
+  pages: ["08_c28_c33_os_processsynchronization:4"]
+  type: keyword
+
+
+# =========================
+# CPU SCHEDULING
+# =========================
+
+- q: "CPU I/O burst cycle"
+  pages: ["09_c33_os_cpuscheduling:1"]
+  type: figure
+
+- q: "round robin scheduling"
+  pages: ["09_c33_os_cpuscheduling:3"]
+  type: figure
+
+- q: "context switching overhead in round robin scheduling"
+  pages: ["09_c33_os_cpuscheduling:4"]
+  type: figure
+
+- q: "multilevel queue scheduling"
+  pages: ["09_c33_os_cpuscheduling:5"]
+  type: figure
+
+- q: "multilevel feedback queue scheduling"
+  pages: ["09_c33_os_cpuscheduling:6"]
+  type: figure
+
+
+# =========================
+# MEMORY MANAGEMENT
+# =========================
+
+- q: "logical address versus physical address"
+  pages: ["11_cxx_os_memorymanagement:2"]
+  type: figure
+
+- q: "MMU mapping logical address to physical address"
+  pages: ["11_cxx_os_memorymanagement:2"]
+  type: figure
+
+- q: "standard swapping between main memory and backing store"
+  pages: ["11_cxx_os_memorymanagement:4"]
+  type: figure
+
+- q: "page table stored in main memory"
+  pages: ["11_cxx_os_memorymanagement:20"]
+  type: figure
+
+- q: "translation lookaside buffer TLB"
+  pages: ["11_cxx_os_memorymanagement:20", "11_cxx_os_memorymanagement:21"]
+  type: keyword
+
+- q: "FIFO optimal and LRU page replacement algorithms"
+  pages: ["11_cxx_os_memorymanagement:42"]
+  type: keyword
+
+- q: "what happens when a process does not have enough frames and keeps generating page faults"
+  pages: ["11_cxx_os_memorymanagement:46", "11_cxx_os_memorymanagement:47"]
+  type: text
+
+- q: "thrashing and its effect on system throughput"
+  pages: ["11_cxx_os_memorymanagement:47"]
+  type: text
+
+
+# =========================
+# STORAGE MANAGEMENT
+# =========================
+
+- q: "file system provides a logical view of secondary storage"
+  pages: ["12_cxx_os_storagemanagement:1"]
+  type: text
+
+- q: "three levels of the file system"
+  pages: ["12_cxx_os_storagemanagement:2"]
+  type: figure
+
+- q: "magnetic disk structure showing platter track sector spindle and read write head"
+  pages: ["12_cxx_os_storagemanagement:2"]
+  type: figure
+
+- q: "disk scheduling seek time and rotational latency"
+  pages: ["12_cxx_os_storagemanagement:3"]
+  type: text
+
+
+# =========================
+# OS / SYSTEM CALLS
+# =========================
+
+- q: "operating system as a resource allocator"
+  pages: ["01_c1_c8_os_introduction:3"]
+  type: text
+
+- q: "what are the responsibilities of an operating system in storage management"
+  pages: ["01_c1_c8_os_introduction:30"]
+  type: text
+
+- q: "types of system calls for process control"
+  pages: ["03_c10_c14_os_structures_systemcalls:21", "03_c10_c14_os_structures_systemcalls:22"]
+  type: keyword
+
+- q: "system calls for file management such as create open read write and close"
+  pages: ["03_c10_c14_os_structures_systemcalls:23"]
+  type: keyword
+
+- q: "shared memory and message passing system calls"
+  pages: ["03_c10_c14_os_structures_systemcalls:25"]
+  type: text
+
+
+# =========================
+# COMPUTING ENVIRONMENTS
+# =========================
+
+- q: "distributed operating system versus network operating system"
+  pages: ["02_c9_os_introduction:6"]
+  type: text
+
+- q: "peer to peer computing where nodes can act as both client and server"
+  pages: ["02_c9_os_introduction:8", "02_c9_os_introduction:9"]
+  type: text
+
+- q: "virtual machine monitor managing multiple guest operating systems"
+  pages: ["02_c9_os_introduction:11"]
+  type: figure
+
+- q: "public private and hybrid cloud computing"
+  pages: ["02_c9_os_introduction:12"]
+  type: keyword
+
 # ... aim for ~40 total: ~15 figure, ~15 text, ~10 keyword
 
 #python -m src.eval.build_queries --query "deadlock prevention conditions" -->run this if you know a topic but dont know exacetly

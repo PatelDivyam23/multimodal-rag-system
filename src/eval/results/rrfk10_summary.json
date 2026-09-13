@@ -1,42 +1,42 @@
 {
   "config": "v1",
-  "n_queries": 5,
+  "n_queries": 49,
   "overall": {
     "r@1": {
-      "visual": 0.4,
-      "dense": 0.5,
-      "bm25": 0.2,
-      "fused": 0.3
+      "visual": 0.561,
+      "dense": 0.439,
+      "bm25": 0.48,
+      "fused": 0.52
     },
     "r@5": {
-      "visual": 0.5,
-      "dense": 0.7,
-      "bm25": 0.4,
-      "fused": 1.0
+      "visual": 0.837,
+      "dense": 0.714,
+      "bm25": 0.663,
+      "fused": 0.806
     },
     "r@10": {
-      "visual": 0.5,
-      "dense": 0.7,
-      "bm25": 0.4,
-      "fused": 1.0
+      "visual": 0.888,
+      "dense": 0.755,
+      "bm25": 0.704,
+      "fused": 0.827
     },
     "mrr": {
-      "visual": 0.6,
-      "dense": 0.9,
-      "bm25": 0.4,
-      "fused": 0.8
+      "visual": 0.749,
+      "dense": 0.652,
+      "bm25": 0.628,
+      "fused": 0.72
     },
     "ndcg@10": {
-      "visual": 0.523,
-      "dense": 0.723,
-      "bm25": 0.4,
-      "fused": 0.849
+      "visual": 0.758,
+      "dense": 0.641,
+      "bm25": 0.624,
+      "fused": 0.721
     },
     "ms": {
-      "visual": 268.6,
-      "dense": 32.8,
-      "bm25": 5.0,
-      "fused": 122.2
+      "visual": 127.0,
+      "dense": 18.592,
+      "bm25": 6.367,
+      "fused": 120.102
     }
   }
 }
