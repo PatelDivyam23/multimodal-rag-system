@@ -49,6 +49,16 @@ index be rebuilt independently of code history. A separate `configs/space.yaml`
 disables 4-bit quantization for hosted GPUs, where fp16 is faster and removes the
 `bitsandbytes` dependency.
 
+### Query your own PDF
+
+The Gradio app accepts PDF uploads. Pages are rendered and embedded with
+ColQwen2 on the local GPU (~1.2 s/page), held in memory for the session, and
+discarded when it ends. The evaluated corpus is never modified.
+
+Uploaded documents use visual retrieval only - dense and lexical indexes are not
+built per upload. Not available in a hosted demo, where per-upload GPU embedding
+exceeds free-tier quotas.
+
 ## Architecture
 
 ![Architecture](rag.png)
@@ -341,6 +351,7 @@ python -m src.retrieval.visual_search --config v2 --query "process state transit
 - [x] Retrieval ablation: visual vs dense vs bm25 vs fused
 - [x] Modality-routed generation (VLM for figure pages, text LLM otherwise)
 - [x] Gradio demo with page thumbnails and retriever provenance
+- [x] Query your own PDF
 - [ ] Weighted RRF — test whether fusion can beat visual-only
 - [ ] Conversational layer with history-aware query rewriting
 - [ ] Deploy to HF Spaces (index hosted as HF Dataset)
