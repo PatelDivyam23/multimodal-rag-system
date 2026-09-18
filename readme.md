@@ -51,13 +51,21 @@ disables 4-bit quantization for hosted GPUs, where fp16 is faster and removes th
 
 ### Query your own PDF
 
-The Gradio app accepts PDF uploads. Pages are rendered and embedded with
-ColQwen2 on the local GPU (~1.2 s/page), held in memory for the session, and
-discarded when it ends. The evaluated corpus is never modified.
+The Gradio app accepts PDF uploads. Pages are rendered, embedded with ColQwen2
+on the local GPU (~1.2 s/page), chunked and indexed for dense and lexical search,
+then held in memory for the session only. The evaluated corpus is never modified,
+so published metrics remain reproducible.
 
-Uploaded documents use visual retrieval only - dense and lexical indexes are not
-built per upload. Not available in a hosted demo, where per-upload GPU embedding
-exceeds free-tier quotas.
+```bash
+python app/app.py
+# Upload a PDF, then switch "Document source" to "uploaded"
+```
+
+All four retrieval modes work on uploaded documents. Pages with no extractable
+text fall back to visual retrieval.
+
+Not available in a hosted demo - per-upload GPU embedding exceeds free-tier
+quotas on Spaces.
 
 ## Architecture
 
@@ -347,14 +355,15 @@ python -m src.retrieval.visual_search --config v2 --query "process state transit
 - [x] ColQwen2 late-interaction visual index
 - [x] Dense + lexical text retrieval
 - [x] RRF fusion with rank provenance
-- [x] Evaluation harness — 30 labelled queries, recall@k / MRR / nDCG
+- [x] Evaluation harness - 30 labelled queries, recall@k / MRR / nDCG
 - [x] Retrieval ablation: visual vs dense vs bm25 vs fused
 - [x] Modality-routed generation (VLM for figure pages, text LLM otherwise)
-- [x] Gradio demo with page thumbnails and retriever provenance
-- [x] Query your own PDF
-- [ ] Weighted RRF — test whether fusion can beat visual-only
+- [x] Gradio demo with retriever toggle and page gallery
+- [x] Upload and query arbitrary PDFs, session-scoped (local GPU)
+- [x] Index published as HF Dataset for runtime loading
+- [ ] Weighted RRF - test whether fusion can beat visual-only
 - [ ] Conversational layer with history-aware query rewriting
-- [ ] Deploy to HF Spaces (index hosted as HF Dataset)
+- [ ] Deploy to HF Spaces (pending free-tier account eligibility)
 
 ---
 

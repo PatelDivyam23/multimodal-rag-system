@@ -84,15 +84,45 @@ class Generator:
         )
         return resp.text
 
+    # # ---------- text path ----------
+    # def answer_text(self, question: str, hits: pd.DataFrame) -> str:
+    #     client = self._groq_client()
+
+    #     blocks = []
+    #     for r in hits.itertuples():
+    #         txt = "\n".join(
+    #             self.chunks[self.chunks.image_path == r.image_path].text.tolist()
+    #         )
+    #         if txt.strip():
+    #             blocks.append(f"[{page_label(r)}]\n{txt.strip()}")
+
+    #     if not blocks:
+    #         return "The retrieved pages contain no extractable text."
+
+    #     resp = client.chat.completions.create(
+    #         model=self.cfg.generation.text_llm.model,
+    #         messages=[
+    #             {"role": "system", "content": SYSTEM},
+    #             {"role": "user", "content": TEXT_USER.format(
+    #                 question=question, context="\n\n---\n\n".join(blocks))},
+    #         ],
+    #         temperature=0.2,
+    #     )
+    #     return resp.choices[0].message.content
+
     # ---------- text path ----------
-    def answer_text(self, question: str, hits: pd.DataFrame) -> str:
+    def answer_text(self, question: str, hits: pd.DataFrame,
+                    session_index=None) -> str:
         client = self._groq_client()
 
         blocks = []
         for r in hits.itertuples():
-            txt = "\n".join(
-                self.chunks[self.chunks.image_path == r.image_path].text.tolist()
-            )
+            if session_index is not None:
+                txt = session_index.page_text(r.image_path)
+            else:
+                txt = "\n".join(
+                    self.chunks[self.chunks.image_path == r.image_path].text.tolist()
+                )
             if txt.strip():
                 blocks.append(f"[{page_label(r)}]\n{txt.strip()}")
 
@@ -111,29 +141,62 @@ class Generator:
         return resp.choices[0].message.content
 
     # ---------- entry point ----------
-    def answer(self, question: str, hits: pd.DataFrame) -> dict:
+    # def answer(self, question: str, hits: pd.DataFrame) -> dict:
+    #     if hits.empty:
+    #         return {"answer": "No relevant pages found.", "route": "none", "hits": hits}
+
+    #     hits = hits.head(self.cfg.generation.max_context_pages)
+    #     route = self.route(hits)
+
+    #     t0 = time.perf_counter()
+    #     # try:
+    #     #     text = self.answer_vlm(question, hits) if route == "vlm" \
+    #     #            else self.answer_text(question, hits)
+    #     # except Exception as exc:
+    #     #     log.warning("%s path failed (%s) — falling back to text", route, exc)
+    #     #     route = "text-fallback"
+    #     #     text = self.answer_text(question, hits)
+    #     try:
+    #         text = self.answer_vlm(question, hits) if route == "vlm" \
+    #                else self.answer_text(question, hits)
+    #     except Exception as exc:
+    #         log.warning("%s path failed (%s) — falling back to text", route, exc)
+    #         route = "text-fallback"
+    #         try:
+    #             text = self.answer_text(question, hits)
+    #         except Exception as exc2:
+    #             route = "failed"
+    #             text = f"Generation failed: {exc2}"
+
+    #     return {
+    #         "answer": text,
+    #         "route": route,
+    #         "ms": round((time.perf_counter() - t0) * 1000),
+    #         "hits": hits,
+    #         "sources": [page_label(r) for r in hits.itertuples()],
+    #     }
+
+        # ---------- entry point ----------
+    def answer(self, question: str, hits: pd.DataFrame,
+               session_index=None) -> dict:
         if hits.empty:
-            return {"answer": "No relevant pages found.", "route": "none", "hits": hits}
+            return {"answer": "No relevant pages found.", "route": "none",
+                    "hits": hits, "ms": 0, "sources": []}
 
         hits = hits.head(self.cfg.generation.max_context_pages)
         route = self.route(hits)
 
         t0 = time.perf_counter()
-        # try:
-        #     text = self.answer_vlm(question, hits) if route == "vlm" \
-        #            else self.answer_text(question, hits)
-        # except Exception as exc:
-        #     log.warning("%s path failed (%s) — falling back to text", route, exc)
-        #     route = "text-fallback"
-        #     text = self.answer_text(question, hits)
         try:
-            text = self.answer_vlm(question, hits) if route == "vlm" \
-                   else self.answer_text(question, hits)
+            if route == "vlm":
+                text = self.answer_vlm(question, hits)
+            else:
+                text = self.answer_text(question, hits, session_index)
         except Exception as exc:
-            log.warning("%s path failed (%s) — falling back to text", route, exc)
+            log.warning("%s path failed (%s) - falling back to text", route, exc)
             route = "text-fallback"
             try:
-                text = self.answer_text(question, hits)
+                text = self.answer_text(question, hits, session_index)
             except Exception as exc2:
                 route = "failed"
                 text = f"Generation failed: {exc2}"

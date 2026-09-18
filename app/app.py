@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import os
+import shutil
 import sys
 from pathlib import Path
 
@@ -9,9 +10,10 @@ import gradio as gr
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from src.generation.answer import RAGPipeline, page_label   # noqa: E402
-from src.utils.config import load_config                    # noqa: E402
-from src.utils.logging import get_logger                    # noqa: E402
+from src.generation.answer import RAGPipeline, page_label   
+from src.ingest.upload import ingest_upload                 
+from src.utils.config import load_config                    
+from src.utils.logging import get_logger                    
 
 log = get_logger()
 
@@ -40,75 +42,60 @@ ROUTE_LABEL = {
 }
 
 
-def run(question: str, mode: str, k: int):
-    if not question.strip():
-        return "Enter a question to get started.", "", [], None
-
-    PIPE.mode = mode
-    out = PIPE.run(question, k=int(k))
-    hits = out["hits"]
-
-    gallery = [
-        (str(CFG.project_root / r.image_path),
-         f"#{r.rank} - {page_label(r)}" + (" [figure]" if r.fig else ""))
-        for r in hits.itertuples()
-    ]
-
-    meta = (
-        f"{ROUTE_LABEL.get(out['route'], out['route'])}\n\n"
-        f"**Retriever:** `{mode}` - **Pages:** {len(hits)} - "
-        f"**Retrieve:** {out['retrieve_ms']} ms - "
-        f"**Generate:** {out['ms']} ms"
-    )
-
-    table = hits[["rank", "paper_id", "page", "fig"]].rename(
-        columns={"paper_id": "document", "fig": "has figure"}
-    )
-
-    return out["answer"], meta, gallery, table
-
-import shutil
-import tempfile
-
-from src.ingest.upload import ingest_upload
-from src.retrieval.maxsim import maxsim
-
+# --------------------------------------------------------------------------
+# handlers
+# --------------------------------------------------------------------------
 
 def handle_upload(pdf_file, state, progress=gr.Progress()):
     if pdf_file is None:
         return state, "No file selected.", gr.update()
 
-    # clean up any previous upload for this session
     if state and state.get("tmp"):
         shutil.rmtree(state["tmp"], ignore_errors=True)
 
     def cb(done, total):
         progress(done / total, desc=f"Embedding page {done}/{total}")
 
-    model = PIPE.retriever.visual._model
-    processor = PIPE.retriever.visual._processor
-
-    idx, tmp = ingest_upload(pdf_file, CFG, model, processor, on_progress=cb)
+    idx, tmp = ingest_upload(
+        pdf_file,
+        CFG,
+        PIPE.retriever.visual._model,
+        PIPE.retriever.visual._processor,
+        text_model=PIPE.retriever.text._model,
+        on_progress=cb,
+    )
     state = {"index": idx, "tmp": tmp}
 
-    msg = (f"Indexed **{idx.name}** - {idx.n_pages} pages, "
-           f"{int(idx.meta.has_figure.sum())} with figures. "
-           "Select *uploaded* as the source to query it.")
+    msg = (
+        f"Indexed **{idx.name}** - {idx.n_pages} pages, "
+        f"{int(idx.meta.has_figure.sum())} with figures"
+        + (f", {len(idx.chunks)} text chunks" if idx.has_text else "")
+        + ". Select *uploaded* as the source to query it."
+    )
     return state, msg, gr.update(value="uploaded")
 
 
 def run(question, mode, k, source, state):
     if not question.strip():
-        return "Enter a question.", "", [], None
+        return "Enter a question to get started.", "", [], None
+
+    session_index = None
 
     if source == "uploaded":
         if not state or "index" not in state:
             return "Upload a PDF first.", "", [], None
 
+        session_index = state["index"]
         q_emb = PIPE.retriever.visual.encode_query(question)
-        hits = state["index"].search(q_emb, k=int(k))
-
-        out = PIPE.generator.answer(question, hits)
+        hits = session_index.search(
+            question,
+            q_emb,
+            k=int(k),
+            mode=mode,
+            text_model=PIPE.retriever.text._model,
+            rrf_k=CFG.retrieval.rrf_k,
+        )
+        out = PIPE.generator.answer(question, hits, session_index=session_index)
         out["retrieve_ms"] = 0
     else:
         PIPE.mode = mode
@@ -116,20 +103,33 @@ def run(question, mode, k, source, state):
         hits = out["hits"]
 
     gallery = [
-        (str(r.image_path if source == "uploaded"
-             else CFG.project_root / r.image_path),
-         f"#{r.rank} - page {r.page}" + (" [figure]" if r.fig else ""))
+        (
+            str(r.image_path if source == "uploaded"
+                else CFG.project_root / r.image_path),
+            f"#{r.rank} - page {r.page}" + (" [figure]" if r.fig else ""),
+        )
         for r in hits.itertuples()
     ]
 
     meta = (
         f"{ROUTE_LABEL.get(out['route'], out['route'])}\n\n"
-        f"**Source:** `{source}` - **Pages:** {len(hits)} - "
+        f"**Source:** `{source}` - **Retriever:** `{mode}` - "
+        f"**Pages:** {len(hits)} - "
+        f"**Retrieve:** {out['retrieve_ms']} ms - "
         f"**Generate:** {out['ms']} ms"
     )
-    table = hits[["rank", "page", "fig"]].rename(columns={"fig": "has figure"})
+
+    cols = ["rank", "page", "fig", "hits"]
+    table = hits[[c for c in cols if c in hits.columns]].rename(
+        columns={"fig": "has figure", "hits": "found by"}
+    )
+
     return out["answer"], meta, gallery, table
 
+
+# --------------------------------------------------------------------------
+# layout
+# --------------------------------------------------------------------------
 
 with gr.Blocks(title="Multimodal RAG", theme=gr.themes.Soft()) as demo:
     gr.Markdown(
@@ -146,10 +146,8 @@ with gr.Blocks(title="Multimodal RAG", theme=gr.themes.Soft()) as demo:
         """
     )
 
-    # NEW - per-session storage for an uploaded document
     state = gr.State()
 
-    # NEW - choose which document set to query
     source = gr.Radio(
         ["corpus", "uploaded"],
         value="corpus",
@@ -157,7 +155,6 @@ with gr.Blocks(title="Multimodal RAG", theme=gr.themes.Soft()) as demo:
         info="corpus = the indexed OS slides; uploaded = your own PDF",
     )
 
-    # NEW - upload panel
     with gr.Accordion("Upload your own PDF (local only)", open=False):
         gr.Markdown(
             "Ingestion runs ColQwen2 on the local GPU at roughly 1.2 s/page, "
@@ -183,7 +180,7 @@ with gr.Blocks(title="Multimodal RAG", theme=gr.themes.Soft()) as demo:
                 ["visual", "fused", "dense", "bm25"],
                 value="visual",
                 label="Retriever",
-                info="visual scored best: recall@10 0.888 (corpus only)",
+                info="visual scored best on the corpus: recall@10 0.888",
             )
             k = gr.Slider(1, 8, value=3, step=1, label="Pages retrieved")
 
@@ -215,25 +212,21 @@ with gr.Blocks(title="Multimodal RAG", theme=gr.themes.Soft()) as demo:
         Switch the retriever to `bm25` and ask the same diagram question to see
         why visual retrieval matters.
 
-        Uploaded documents use visual retrieval only - dense and lexical indexes
-        are not built per upload.
+        Uploaded documents build all three indexes, though pages with no
+        extractable text fall back to visual retrieval only.
         """
     )
 
-    # NEW - upload handler
     upload_btn.click(
         handle_upload,
         [pdf_in, state],
         [state, upload_status, source],
     )
 
-    # CHANGED - both now pass source and state
     ask.click(run, [question, mode, k, source, state],
               [answer, meta, gallery, table])
     question.submit(run, [question, mode, k, source, state],
                     [answer, meta, gallery, table])
-
-
 
 
 if __name__ == "__main__":

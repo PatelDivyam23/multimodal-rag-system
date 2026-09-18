@@ -7,6 +7,7 @@ from pathlib import Path
 
 import pandas as pd
 import pymupdf
+import numpy as np
 
 from src.ingest.embed_core import embed_images
 from src.ingest.pdf_to_images import page_has_figure
@@ -44,9 +45,27 @@ def render_upload(pdf_path: Path, out_dir: Path, cfg) -> pd.DataFrame:
     return pd.DataFrame(records), name
 
 
-def ingest_upload(pdf_file: str, cfg, model, processor,
-                  on_progress=None) -> tuple[SessionIndex, Path]:
-    """Render + embed an uploaded PDF. Caller owns the returned temp dir."""
+# def ingest_upload(pdf_file: str, cfg, model, processor,
+#                   on_progress=None) -> tuple[SessionIndex, Path]:
+#     """Render + embed an uploaded PDF. Caller owns the returned temp dir."""
+#     tmp = Path(tempfile.mkdtemp(prefix="rag_upload_"))
+#     meta, name = render_upload(Path(pdf_file), tmp, cfg)
+#     log.info("Uploaded '%s': %d pages", name, len(meta))
+
+#     paths = [Path(p) for p in meta.image_path]
+#     vectors = embed_images(model, processor, paths,
+#                            batch_size=cfg.visual.batch_size,
+#                            on_progress=on_progress)
+
+#     return SessionIndex(vectors, meta, name), tmp
+
+def ingest_upload(pdf_file, cfg, model, processor,
+                  text_model=None, on_progress=None):
+    """Render, embed and index an uploaded PDF. Caller owns the temp dir."""
+    from rank_bm25 import BM25Okapi
+
+    from src.ingest.embed_text import chunk_text, tokenize
+
     tmp = Path(tempfile.mkdtemp(prefix="rag_upload_"))
     meta, name = render_upload(Path(pdf_file), tmp, cfg)
     log.info("Uploaded '%s': %d pages", name, len(meta))
@@ -56,4 +75,25 @@ def ingest_upload(pdf_file: str, cfg, model, processor,
                            batch_size=cfg.visual.batch_size,
                            on_progress=on_progress)
 
-    return SessionIndex(vectors, meta, name), tmp
+    text_vecs = bm25 = chunks = None
+    if text_model is not None:
+        records = []
+        for row in meta.itertuples():
+            for ch in chunk_text(row.text, cfg.text.chunk_size,
+                                 cfg.text.chunk_overlap):
+                records.append({"image_path": row.image_path, "text": ch})
+
+        if records:
+            chunks = pd.DataFrame(records)
+            text_vecs = text_model.encode(
+                chunks.text.tolist(),
+                batch_size=cfg.text.batch_size,
+                normalize_embeddings=True,
+                convert_to_numpy=True,
+            ).astype(np.float32)
+            bm25 = BM25Okapi([tokenize(t) for t in chunks.text])
+            log.info("Built %d text chunks for upload", len(chunks))
+
+    idx = SessionIndex(vectors, meta, name,
+                       text_vecs=text_vecs, bm25=bm25, chunks=chunks)
+    return idx, tmp
