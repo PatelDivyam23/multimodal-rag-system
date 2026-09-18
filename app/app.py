@@ -46,18 +46,50 @@ ROUTE_LABEL = {
 # handlers
 # --------------------------------------------------------------------------
 
-def handle_upload(pdf_file, state, progress=gr.Progress()):
-    if pdf_file is None:
-        return state, "No file selected.", gr.update()
+# def handle_upload(pdf_file, state, progress=gr.Progress()):
+#     if pdf_file is None:
+#         return state, "No file selected.", gr.update()
+
+#     if state and state.get("tmp"):
+#         shutil.rmtree(state["tmp"], ignore_errors=True)
+
+#     def cb(done, total):
+#         progress(done / total, desc=f"Embedding page {done}/{total}")
+
+#     idx, tmp = ingest_upload(
+#         pdf_file,
+#         CFG,
+#         PIPE.retriever.visual._model,
+#         PIPE.retriever.visual._processor,
+#         text_model=PIPE.retriever.text._model,
+#         on_progress=cb,
+#     )
+#     state = {"index": idx, "tmp": tmp}
+
+#     msg = (
+#         f"Indexed **{idx.name}** - {idx.n_pages} pages, "
+#         f"{int(idx.meta.has_figure.sum())} with figures"
+#         + (f", {len(idx.chunks)} text chunks" if idx.has_text else "")
+#         + ". Select *uploaded* as the source to query it."
+#     )
+#     return state, msg, gr.update(value="uploaded")
+
+#allow multiple files
+
+def handle_upload(pdf_files, state, progress=gr.Progress()):
+    if not pdf_files:
+        return state, "No files selected.", gr.update()
 
     if state and state.get("tmp"):
         shutil.rmtree(state["tmp"], ignore_errors=True)
+
+    paths = [f.name if hasattr(f, "name") else f for f in pdf_files]
 
     def cb(done, total):
         progress(done / total, desc=f"Embedding page {done}/{total}")
 
     idx, tmp = ingest_upload(
-        pdf_file,
+        paths,
         CFG,
         PIPE.retriever.visual._model,
         PIPE.retriever.visual._processor,
@@ -67,10 +99,10 @@ def handle_upload(pdf_file, state, progress=gr.Progress()):
     state = {"index": idx, "tmp": tmp}
 
     msg = (
-        f"Indexed **{idx.name}** - {idx.n_pages} pages, "
+        f"Indexed **{idx.n_docs} document(s)** - {idx.n_pages} pages, "
         f"{int(idx.meta.has_figure.sum())} with figures"
         + (f", {len(idx.chunks)} text chunks" if idx.has_text else "")
-        + ". Select *uploaded* as the source to query it."
+        + ". Select *uploaded* as the source to query."
     )
     return state, msg, gr.update(value="uploaded")
 
@@ -164,7 +196,9 @@ with gr.Blocks(title="Multimodal RAG", theme=gr.themes.Soft()) as demo:
             "**Not available in a hosted demo** - per-upload GPU embedding "
             "exceeds free-tier quotas. Clone the repo to use this."
         )
-        pdf_in = gr.File(label="PDF", file_types=[".pdf"])
+        # pdf_in = gr.File(label="PDF", file_types=[".pdf"])
+        pdf_in = gr.File(label="PDFs", file_types=[".pdf"],
+                         file_count="multiple")
         upload_btn = gr.Button("Ingest PDF")
         upload_status = gr.Markdown()
 

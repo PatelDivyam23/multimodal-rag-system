@@ -18,6 +18,7 @@ class SessionIndex:
         self.meta = meta.reset_index(drop=True)
         self.name = name
         self.n_pages = len(vectors)
+        self.n_docs = 1
 
         self.text_vecs = text_vecs          # [n_chunks, dim], normalized
         self.bm25 = bm25
@@ -85,12 +86,24 @@ class SessionIndex:
             order = [p for p, _ in sorted(fused.items(), key=lambda x: -x[1])][:k]
             provenance = {p: ",".join(contrib[p]) for p in order}
 
+        # rows = []
+        # for rank, page in enumerate(order, 1):
+        #     m = self.meta[self.meta.image_path == page].iloc[0]
+        #     rows.append({
+        #         "rank": rank,
+        #         "paper_id": self.name,
+        #         "page": int(m.page_no) + 1,
+        #         "fig": bool(m.has_figure),
+        #         "image_path": page,
+        #         "hits": provenance.get(page, ""),
+        #     })
+        # return pd.DataFrame(rows)
         rows = []
         for rank, page in enumerate(order, 1):
             m = self.meta[self.meta.image_path == page].iloc[0]
             rows.append({
                 "rank": rank,
-                "paper_id": self.name,
+                "paper_id": m.doc_name if "doc_name" in self.meta.columns else self.name,
                 "page": int(m.page_no) + 1,
                 "fig": bool(m.has_figure),
                 "image_path": page,

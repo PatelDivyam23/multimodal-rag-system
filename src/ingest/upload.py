@@ -59,16 +59,68 @@ def render_upload(pdf_path: Path, out_dir: Path, cfg) -> pd.DataFrame:
 
 #     return SessionIndex(vectors, meta, name), tmp
 
-def ingest_upload(pdf_file, cfg, model, processor,
+# def ingest_upload(pdf_file, cfg, model, processor,
+#                   text_model=None, on_progress=None):
+#     """Render, embed and index an uploaded PDF. Caller owns the temp dir."""
+#     from rank_bm25 import BM25Okapi
+
+#     from src.ingest.embed_text import chunk_text, tokenize
+
+#     tmp = Path(tempfile.mkdtemp(prefix="rag_upload_"))
+#     meta, name = render_upload(Path(pdf_file), tmp, cfg)
+#     log.info("Uploaded '%s': %d pages", name, len(meta))
+
+#     paths = [Path(p) for p in meta.image_path]
+#     vectors = embed_images(model, processor, paths,
+#                            batch_size=cfg.visual.batch_size,
+#                            on_progress=on_progress)
+
+#     text_vecs = bm25 = chunks = None
+#     if text_model is not None:
+#         records = []
+#         for row in meta.itertuples():
+#             for ch in chunk_text(row.text, cfg.text.chunk_size,
+#                                  cfg.text.chunk_overlap):
+#                 records.append({"image_path": row.image_path, "text": ch})
+
+#         if records:
+#             chunks = pd.DataFrame(records)
+#             text_vecs = text_model.encode(
+#                 chunks.text.tolist(),
+#                 batch_size=cfg.text.batch_size,
+#                 normalize_embeddings=True,
+#                 convert_to_numpy=True,
+#             ).astype(np.float32)
+#             bm25 = BM25Okapi([tokenize(t) for t in chunks.text])
+#             log.info("Built %d text chunks for upload", len(chunks))
+
+#     idx = SessionIndex(vectors, meta, name,
+#                        text_vecs=text_vecs, bm25=bm25, chunks=chunks)
+#     return idx, tmp
+
+#for multiple files
+
+def ingest_upload(pdf_files, cfg, model, processor,
                   text_model=None, on_progress=None):
-    """Render, embed and index an uploaded PDF. Caller owns the temp dir."""
+    """Render, embed and index one or more uploaded PDFs."""
     from rank_bm25 import BM25Okapi
 
     from src.ingest.embed_text import chunk_text, tokenize
 
+    if isinstance(pdf_files, (str, Path)):
+        pdf_files = [pdf_files]
+
     tmp = Path(tempfile.mkdtemp(prefix="rag_upload_"))
-    meta, name = render_upload(Path(pdf_file), tmp, cfg)
-    log.info("Uploaded '%s': %d pages", name, len(meta))
+
+    frames, names = [], []
+    for pdf in pdf_files:
+        meta, name = render_upload(Path(pdf), tmp, cfg)
+        meta["doc_name"] = name
+        frames.append(meta)
+        names.append(name)
+
+    meta = pd.concat(frames, ignore_index=True)
+    log.info("Uploaded %d document(s): %d pages", len(names), len(meta))
 
     paths = [Path(p) for p in meta.image_path]
     vectors = embed_images(model, processor, paths,
@@ -94,6 +146,8 @@ def ingest_upload(pdf_file, cfg, model, processor,
             bm25 = BM25Okapi([tokenize(t) for t in chunks.text])
             log.info("Built %d text chunks for upload", len(chunks))
 
-    idx = SessionIndex(vectors, meta, name,
+    label = names[0] if len(names) == 1 else f"{len(names)} documents"
+    idx = SessionIndex(vectors, meta, label,
                        text_vecs=text_vecs, bm25=bm25, chunks=chunks)
+    idx.n_docs = len(names)
     return idx, tmp
